@@ -1,4 +1,7 @@
 import type { ReactNode } from 'react'
+import SidebarLink from '../Components/SidebarLink'
+
+const navItems = ['Dashboard', 'Room', 'Meals', 'Complaints', 'Leave', 'Announcements']
 
 type AppShellProps = {
   children: ReactNode
@@ -10,21 +13,11 @@ export default function AppShell({ children }: AppShellProps) {
       <aside className="hidden w-60 flex-col border-r border-slate-200 bg-white p-4 md:flex">
         <div className="text-xl font-bold text-brand-600">Dormly</div>
         <nav className="mt-8 flex flex-col gap-1">
-          <a href="#" className="rounded-lg bg-brand-50 px-3 py-2 text-sm font-medium text-brand-700">
-            Dashboard
-          </a>
-          <a href="#" className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100">
-            Room
-          </a>
-          <a href="#" className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100">
-            Meals
-          </a>
-          <a href="#" className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100">
-            Complaints
-            </a>
-            <a href="#" className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100">
-            Leave
-            </a>
+          <nav className="mt-8 flex flex-col gap-1">
+  {navItems.map((item) => (
+    <SidebarLink key={item} label={item} active={item === 'Meals'} />
+  ))}
+</nav>
         </nav>
       </aside>
 
