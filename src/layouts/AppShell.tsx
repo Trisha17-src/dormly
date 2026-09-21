@@ -1,7 +1,14 @@
 import type { ReactNode } from 'react'
 import SidebarLink from '../Components/SidebarLink'
 
-const navItems = ['Dashboard', 'Room', 'Meals', 'Complaints', 'Leave', 'Announcements']
+const navItems = [
+  { label: 'Dashboard', to: '/' },
+  { label: 'Room', to: '/room' },
+  { label: 'Meals', to: '/meals' },
+  { label: 'Complaints', to: '/complaints' },
+  { label: 'Leave', to: '/leave' },
+  { label: 'Announcements', to: '/announcements' },
+]
 
 type AppShellProps = {
   children: ReactNode
@@ -13,11 +20,9 @@ export default function AppShell({ children }: AppShellProps) {
       <aside className="hidden w-60 flex-col border-r border-slate-200 bg-white p-4 md:flex">
         <div className="text-xl font-bold text-brand-600">Dormly</div>
         <nav className="mt-8 flex flex-col gap-1">
-          <nav className="mt-8 flex flex-col gap-1">
-  {navItems.map((item) => (
-    <SidebarLink key={item} label={item} active={item === 'Meals'} />
-  ))}
-</nav>
+          {navItems.map((item) => (
+            <SidebarLink key={item.to} label={item.label} to={item.to} />
+          ))}
         </nav>
       </aside>
 
@@ -31,3 +36,4 @@ export default function AppShell({ children }: AppShellProps) {
     </div>
   )
 }
+
