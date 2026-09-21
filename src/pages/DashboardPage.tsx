@@ -1,5 +1,13 @@
 import Button from '../Components/Button'
 import Card from '../Components/Card'
+import StatusBadge from '../Components/StatusBadge'
+import type { Status } from '../Components/StatusBadge'
+
+const complaints: { id: number; title: string; status: Status }[] = [
+  { id: 1, title: 'Wi-Fi not working in room', status: 'in_progress' },
+  { id: 2, title: 'Broken window latch', status: 'open' },
+  { id: 3, title: 'Water leakage in bathroom', status: 'resolved' },
+]
 
 export default function DashboardPage() {
   return (
@@ -24,6 +32,18 @@ export default function DashboardPage() {
         <Button variant="secondary">Rate meal</Button>
         <Button variant="danger">Cancel leave</Button>
       </div>
+      <div className="mt-6">
+  <Card title="My complaints">
+    <ul className="divide-y divide-slate-100">
+      {complaints.map((c) => (
+        <li key={c.id} className="flex items-center justify-between py-2">
+          <span className="text-sm text-slate-900">{c.title}</span>
+          <StatusBadge status={c.status} />
+        </li>
+      ))}
+    </ul>
+  </Card>
+</div>
     </div>
   )
 }
