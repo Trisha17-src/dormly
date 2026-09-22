@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { Outlet } from 'react-router'
 import SidebarLink from '../Components/SidebarLink'
 
 const navItems = [
@@ -10,11 +10,7 @@ const navItems = [
   { label: 'Announcements', to: '/announcements' },
 ]
 
-type AppShellProps = {
-  children: ReactNode
-}
-
-export default function AppShell({ children }: AppShellProps) {
+export default function AppShell() {
   return (
     <div className="flex h-screen bg-slate-50">
       <aside className="hidden w-60 flex-col border-r border-slate-200 bg-white p-4 md:flex">
@@ -31,9 +27,10 @@ export default function AppShell({ children }: AppShellProps) {
           <span className="text-sm text-slate-500">Welcome back</span>
           <span className="text-sm font-medium text-slate-900">Trisha</span>
         </header>
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-6">
+          <Outlet />
+        </main>
       </div>
     </div>
   )
 }
-

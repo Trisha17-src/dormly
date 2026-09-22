@@ -3,11 +3,14 @@ import AppShell from './layouts/AppShell'
 import PlaceholderPage from './pages/PlaceholderPage'
 import DashboardPage from './pages/DashboardPage'
 import ComplaintsPage from './pages/ComplaintsPage'
+import LoginPage from './pages/LoginPage'
 
 function App() {
   return (
-    <AppShell>
-      <Routes>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+
+      <Route element={<AppShell />}>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/room" element={<PlaceholderPage title="Room" />} />
         <Route path="/meals" element={<PlaceholderPage title="Meals" />} />
@@ -15,8 +18,8 @@ function App() {
         <Route path="/leave" element={<PlaceholderPage title="Leave" />} />
         <Route path="/announcements" element={<PlaceholderPage title="Announcements" />} />
         <Route path="*" element={<PlaceholderPage title="Page not found" />} />
-      </Routes>
-    </AppShell>
+      </Route>
+    </Routes>
   )
 }
 
