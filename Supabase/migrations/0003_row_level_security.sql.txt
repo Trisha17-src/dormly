@@ -1,0 +1,248 @@
+-- Reusable helper: checks if the currently logged-in user is a warden or admin
+create or replace function is_staff()
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from profiles
+    where id = auth.uid() and role in ('warden', 'admin')
+  );
+$$;
+
+-- =========================================
+-- profiles
+-- =========================================
+alter table profiles enable row level security;
+
+create policy "profiles_select_own"
+on profiles
+for select
+using (id = auth.uid());
+
+create policy "profiles_select_all_for_staff"
+on profiles
+for select
+using (
+  exists (
+    select 1 from profiles
+    where id = auth.uid() and role in ('warden', 'admin')
+  )
+);
+
+create policy "profiles_insert_own"
+on profiles
+for insert
+with check (id = auth.uid());
+
+create policy "profiles_update_own"
+on profiles
+for update
+using (id = auth.uid());
+
+-- =========================================
+-- rooms
+-- =========================================
+alter table rooms enable row level security;
+
+create policy "rooms_select_all"
+on rooms
+for select
+using (true);
+
+create policy "rooms_insert_staff"
+on rooms
+for insert
+with check (is_staff());
+
+create policy "rooms_update_staff"
+on rooms
+for update
+using (is_staff());
+
+create policy "rooms_delete_staff"
+on rooms
+for delete
+using (is_staff());
+
+-- =========================================
+-- students
+-- =========================================
+alter table students enable row level security;
+
+create policy "students_select_own_or_staff"
+on students
+for select
+using (profile_id = auth.uid() or is_staff());
+
+create policy "students_insert_own"
+on students
+for insert
+with check (profile_id = auth.uid());
+
+create policy "students_update_staff"
+on students
+for update
+using (is_staff());
+
+-- =========================================
+-- room_allocations
+-- =========================================
+alter table room_allocations enable row level security;
+
+create policy "room_allocations_select_own_or_staff"
+on room_allocations
+for select
+using (
+  student_id in (select id from students where profile_id = auth.uid())
+  or is_staff()
+);
+
+create policy "room_allocations_write_staff"
+on room_allocations
+for all
+using (is_staff())
+with check (is_staff());
+
+-- =========================================
+-- complaints
+-- =========================================
+alter table complaints enable row level security;
+
+create policy "complaints_select_own_or_staff"
+on complaints
+for select
+using (
+  student_id in (select id from students where profile_id = auth.uid())
+  or is_staff()
+);
+
+create policy "complaints_insert_own"
+on complaints
+for insert
+with check (
+  student_id in (select id from students where profile_id = auth.uid())
+);
+
+create policy "complaints_update_staff"
+on complaints
+for update
+using (is_staff());
+
+-- =========================================
+-- leave_requests
+-- =========================================
+alter table leave_requests enable row level security;
+
+create policy "leave_requests_select_own_or_staff"
+on leave_requests
+for select
+using (
+  student_id in (select id from students where profile_id = auth.uid())
+  or is_staff()
+);
+
+create policy "leave_requests_insert_own"
+on leave_requests
+for insert
+with check (
+  student_id in (select id from students where profile_id = auth.uid())
+);
+
+create policy "leave_requests_update_staff"
+on leave_requests
+for update
+using (is_staff());
+
+-- =========================================
+-- meal_ratings
+-- =========================================
+alter table meal_ratings enable row level security;
+
+create policy "meal_ratings_select_own_or_staff"
+on meal_ratings
+for select
+using (
+  student_id in (select id from students where profile_id = auth.uid())
+  or is_staff()
+);
+
+create policy "meal_ratings_insert_own"
+on meal_ratings
+for insert
+with check (
+  student_id in (select id from students where profile_id = auth.uid())
+);
+
+-- =========================================
+-- meals
+-- =========================================
+alter table meals enable row level security;
+
+create policy "meals_select_all"
+on meals
+for select
+using (true);
+
+create policy "meals_write_staff"
+on meals
+for all
+using (is_staff())
+with check (is_staff());
+
+-- =========================================
+-- announcements
+-- =========================================
+alter table announcements enable row level security;
+
+create policy "announcements_select_all"
+on announcements
+for select
+using (true);
+
+create policy "announcements_write_staff"
+on announcements
+for all
+using (is_staff())
+with check (is_staff());
+
+-- =========================================
+-- notifications
+-- =========================================
+alter table notifications enable row level security;
+
+create policy "notifications_select_own"
+on notifications
+for select
+using (recipient_id = auth.uid());
+
+create policy "notifications_update_own"
+on notifications
+for update
+using (recipient_id = auth.uid());
+
+-- =========================================
+-- sos_alerts
+-- =========================================
+alter table sos_alerts enable row level security;
+
+create policy "sos_alerts_select_own_or_staff"
+on sos_alerts
+for select
+using (
+  student_id in (select id from students where profile_id = auth.uid())
+  or is_staff()
+);
+
+create policy "sos_alerts_insert_own"
+on sos_alerts
+for insert
+with check (
+  student_id in (select id from students where profile_id = auth.uid())
+);
+
+create policy "sos_alerts_update_staff"
+on sos_alerts
+for update
+using (is_staff());
