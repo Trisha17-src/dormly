@@ -4,6 +4,8 @@ import PlaceholderPage from './pages/PlaceholderPage'
 import DashboardPage from './pages/DashboardPage'
 import ComplaintsPage from './pages/ComplaintsPage'
 import LoginPage from './pages/LoginPage'
+import { supabase } from './lib/supabaseClient'
+
 
 function App() {
   return (
