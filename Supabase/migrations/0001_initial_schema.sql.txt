@@ -1,0 +1,32 @@
+-- profiles: one row per person, linked to Supabase Auth
+create table profiles (
+  id uuid primary key references auth.users(id),
+  full_name text not null,
+  email text not null unique,
+  phone text,
+  role text not null check (role in ('student', 'warden', 'admin')),
+  created_at timestamptz not null default now()
+);
+
+-- rooms: physical hostel rooms
+create table rooms (
+  id bigint generated always as identity primary key,
+  block text not null,
+  room_number text not null,
+  floor integer not null,
+  capacity integer not null check (capacity > 0),
+  status text not null default 'active' check (status in ('active', 'maintenance')),
+  created_at timestamptz not null default now(),
+  unique (block, room_number)
+);
+
+-- students: student-specific data, linked to a profile and optionally a room
+create table students (
+  id bigint generated always as identity primary key,
+  profile_id uuid not null unique references profiles(id),
+  student_id text not null unique,
+  course text not null,
+  year integer not null check (year between 1 and 6),
+  room_id bigint references rooms(id),
+  created_at timestamptz not null default now()
+);
