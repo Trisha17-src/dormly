@@ -56,7 +56,7 @@ export default function SignupPage() {
       return
     }
 
-    navigate('/')
+    navigate(role === 'warden' ? '/warden/dashboard' : '/student/dashboard')
   }
 
   return (

@@ -1,16 +1,27 @@
 import { Outlet } from 'react-router'
 import SidebarLink from '../Components/SidebarLink'
+import { useAuth } from '../lib/AuthContext'
 
-const navItems = [
-  { label: 'Dashboard', to: '/' },
-  { label: 'Room', to: '/room' },
-  { label: 'Meals', to: '/meals' },
-  { label: 'Complaints', to: '/complaints' },
-  { label: 'Leave', to: '/leave' },
-  { label: 'Announcements', to: '/announcements' },
+const studentNavItems = [
+  { label: 'Dashboard', to: '/student/dashboard' },
+  { label: 'Room', to: '/student/room' },
+  { label: 'Meals', to: '/student/meals' },
+  { label: 'Complaints', to: '/student/complaints' },
+  { label: 'Leave', to: '/student/leave' },
+  { label: 'Announcements', to: '/student/announcements' },
+]
+
+const wardenNavItems = [
+  { label: 'Dashboard', to: '/warden/dashboard' },
+  { label: 'Students', to: '/warden/students' },
+  { label: 'Rooms', to: '/warden/rooms' },
+  { label: 'Complaints', to: '/warden/complaints' },
 ]
 
 export default function AppShell() {
+  const { profile } = useAuth()
+  const navItems = profile?.role === 'warden' ? wardenNavItems : studentNavItems
+
   return (
     <div className="flex h-screen bg-slate-50">
       <aside className="hidden w-60 flex-col border-r border-slate-200 bg-white p-4 md:flex">

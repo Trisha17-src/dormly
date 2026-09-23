@@ -1,14 +1,19 @@
 import { useState } from 'react'
 import type { SyntheticEvent } from 'react'
+import { useNavigate, Link } from 'react-router'
+import { supabase } from '../lib/supabaseClient'
 import Button from '../Components/Button'
 import TextInput from '../Components/TextInput'
 
 type Errors = { email?: string; password?: string }
 
 export default function LoginPage() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<Errors>({})
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   function validate(): Errors {
     const found: Errors = {}
@@ -25,12 +30,40 @@ export default function LoginPage() {
     return found
   }
 
-  function handleSubmit(e: SyntheticEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault()
+    setSubmitError(null)
     const found = validate()
     setErrors(found)
     if (Object.keys(found).length > 0) return
-    console.log('Form is valid. Would sign in as:', email)
+
+    setLoading(true)
+
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (signInError) {
+      setLoading(false)
+      setSubmitError(signInError.message)
+      return
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', signInData.user.id)
+      .single()
+
+    setLoading(false)
+
+    if (profileError || !profile) {
+      setSubmitError('Signed in, but could not load your profile. Please try again.')
+      return
+    }
+
+    navigate(profile.role === 'warden' ? '/warden/dashboard' : '/student/dashboard')
   }
 
   return (
@@ -62,10 +95,24 @@ export default function LoginPage() {
             }}
             error={errors.password}
           />
-          <Button type="submit" className="w-full">
-            Sign in
+
+          {submitError && (
+            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+              {submitError}
+            </p>
+          )}
+
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Signing in…' : 'Sign in'}
           </Button>
         </form>
+
+        <p className="mt-4 text-center text-sm text-slate-500">
+          Don't have an account?{' '}
+          <Link to="/signup" className="font-medium text-brand-600 hover:text-brand-700">
+            Sign up
+          </Link>
+        </p>
       </div>
     </div>
   )
