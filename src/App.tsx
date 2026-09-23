@@ -4,14 +4,16 @@ import PlaceholderPage from './pages/PlaceholderPage'
 import DashboardPage from './pages/DashboardPage'
 import ComplaintsPage from './pages/ComplaintsPage'
 import LoginPage from './pages/LoginPage'
-import { supabase } from './lib/supabaseClient'
+import SignupPage from './pages/SignupPage'
+
 
 
 function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-
+      
+<Route path="/signup" element={<SignupPage />} />
       <Route element={<AppShell />}>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/room" element={<PlaceholderPage title="Room" />} />

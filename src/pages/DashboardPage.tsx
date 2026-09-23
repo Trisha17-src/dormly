@@ -2,6 +2,8 @@ import Button from '../Components/Button'
 import Card from '../Components/Card'
 import StatusBadge from '../Components/StatusBadge'
 import type { Status } from '../Components/StatusBadge'
+import { useAuth } from '../lib/AuthContext'
+
 
 const complaints: { id: number; title: string; status: Status }[] = [
   { id: 1, title: 'Wi-Fi not working in room', status: 'in_progress' },
